@@ -15,6 +15,13 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = ExtraGolems.MODID, name = ExtraGolems.NAME, version = ExtraGolems.VERSION)
 public class ExtraGolems {
 
+  // TODO - re-add all other gradle tasks for sonarqube, curseforge, etc. if need be
+  // TODO - adjust textures used for Cobbletone golem
+  // TODO - complete/fix localization for covvlestone golem
+  // TODO - fix golem names when used in console output to screen in game not being correct
+  // TODO - tune down passive regeneration for all golemns
+  // TODO - tune down the strength of cobblestone golems a bit
+
   public static final String MODID = "golems";
   protected static final String NAME = "Extra Golems";
   protected static final String VERSION = "7.2.0";
