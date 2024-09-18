@@ -15,6 +15,7 @@ entity.golems.golem_bookshelf.name=Librarian Golem
 entity.golems.golem_clay.name=Clay Golem
 entity.golems.golem_coal.name=Coal Golem
 entity.golems.golem_concrete.name=Concrete Golem
+entity.golems.golem_concrete.name=Cobblestone Golem
 entity.golems.golem_crafting.name=Crafting Golem
 entity.golems.golem_diamond.name=Diamond Golem
 entity.golems.golem_dispenser.name=Dispenser Golem

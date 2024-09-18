@@ -11,27 +11,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
-public final class EntityConcreteGolem extends GolemColorizedMultiTextured {
-
-  public static final String ALLOW_RESIST = "Allow Special: Resistance";
-  public static final String PREFIX = "concrete";
+public final class EntityCobblestoneGolem extends GolemColorizedMultiTextured {
+  public static final String PREFIX = "cobblestone";
   public static final int[] COLOR_ARRAY = ItemDye.DYE_COLORS;
 
   private static final ResourceLocation TEXTURE_BASE = GolemBase.makeTexture(ExtraGolems.MODID,
-      GolemNames.CONCRETE_GOLEM + "_base");
+      GolemNames.COBBLESTONE_GOLEM + "_base");
   private static final ResourceLocation TEXTURE_OVERLAY = GolemBase.makeTexture(ExtraGolems.MODID,
       GolemNames.CONCRETE_GOLEM + "_grayscale");
 
-  public EntityConcreteGolem(final World world) {
+  public EntityCobblestoneGolem(final World world) {
     super(world, TEXTURE_BASE, TEXTURE_OVERLAY, COLOR_ARRAY);
-    this.addHealItem(new ItemStack(Blocks.CONCRETE, 1, OreDictionary.WILDCARD_VALUE), 0.75D);
-    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.26D);
+    this.addHealItem(new ItemStack(Blocks.COBBLESTONE, 1, OreDictionary.WILDCARD_VALUE), 0.75D);
+    this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.22D);
   }
 
   @Override
@@ -41,9 +38,6 @@ public final class EntityConcreteGolem extends GolemColorizedMultiTextured {
 
   @Override
   protected void damageEntity(DamageSource source, float amount) {
-    if (getConfig(this).getBoolean(ALLOW_RESIST)) {
-      amount *= 3.0F / 5.0F;
-    }
     super.damageEntity(source, amount);
   }
 
@@ -57,10 +51,6 @@ public final class EntityConcreteGolem extends GolemColorizedMultiTextured {
 
   @Override
   public List<String> addSpecialDesc(final List<String> list) {
-    if (getConfig(this).getBoolean(ALLOW_RESIST)) {
-      String sResist = TextFormatting.DARK_GRAY + trans("effect.resistance");
-      list.add(sResist);
-    }
     return list;
   }
 }

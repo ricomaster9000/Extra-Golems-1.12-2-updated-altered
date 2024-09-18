@@ -67,6 +67,7 @@ public final class Config {
         .addKey(EntityCoalGolem.ALLOW_SPECIAL, false, "Whether this golem can inflict blindness"));
     GolemLookup.addConfig(EntityConcreteGolem.class, new GolemConfigSet(config, "Concrete Golem", 38.0D, 6.0F)
         .addKey(EntityConcreteGolem.ALLOW_RESIST, true, "Whether this golem reduces damage it takes"));
+    GolemLookup.addConfig(EntityCobblestoneGolem.class, new GolemConfigSet(config, "Cobblestone Golem", 30.0D, 4.0F));
     GolemLookup.addConfig(EntityCraftingGolem.class, new GolemConfigSet(config, "Crafting Golem", 24.0D, 2.0F)
         .addKey(EntityCraftingGolem.ALLOW_SPECIAL, true, "Whether this golem can open a crafting grid"));
     GolemLookup.addConfig(EntityDiamondGolem.class, new GolemConfigSet(config, "Diamond Golem", 220.0D, 20.0F));

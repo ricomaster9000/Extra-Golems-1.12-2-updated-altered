@@ -1,15 +1,11 @@
 package com.golems.entity;
 
+import com.golems.main.ExtraGolems;
+import com.golems.util.GolemNames;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-
-import com.golems.util.GolemNames;
-
-import com.golems.main.ExtraGolems;
 
 /**
  * This class should always be registered with RenderGolemColorized. It supports
@@ -23,6 +19,7 @@ public abstract class GolemColorized extends GolemBase {
   protected float colorRed;
   protected float colorBlue;
   protected float colorGreen;
+
   protected float colorAlpha;
   protected final ResourceLocation base;
   protected final ResourceLocation overlay;

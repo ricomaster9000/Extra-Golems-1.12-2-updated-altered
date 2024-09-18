@@ -96,6 +96,7 @@ public class CommonProxy {
         build(EntityClayGolem.class, GolemNames.CLAY_GOLEM, Blocks.CLAY),
         build(EntityCoalGolem.class, GolemNames.COAL_GOLEM, Blocks.COAL_BLOCK),
         build(EntityConcreteGolem.class, GolemNames.CONCRETE_GOLEM, Blocks.CONCRETE),
+        build(EntityConcreteGolem.class, GolemNames.COBBLESTONE_GOLEM, Blocks.COBBLESTONE),
         build(EntityCraftingGolem.class, GolemNames.CRAFTING_GOLEM, Blocks.CRAFTING_TABLE),
         build(EntityDiamondGolem.class, GolemNames.DIAMOND_GOLEM, Blocks.DIAMOND_BLOCK),
         build(EntityDispenserGolem.class, GolemNames.DISPENSER_GOLEM, Blocks.DISPENSER),
@@ -140,6 +141,7 @@ public class CommonProxy {
     registerLootTables(ExtraGolems.MODID, GolemNames.MUSHROOM_GOLEM, EntityMushroomGolem.SHROOM_TYPES);
     registerLootTables(ExtraGolems.MODID, GolemNames.REDSTONELAMP_GOLEM, EntityRedstoneLampGolem.VARIANTS);
     registerLootTables(ExtraGolems.MODID, GolemNames.CONCRETE_GOLEM, EntityConcreteGolem.COLOR_ARRAY.length);
+    registerLootTables(ExtraGolems.MODID, GolemNames.COBBLESTONE_GOLEM, EntityCobblestoneGolem.COLOR_ARRAY.length);
     registerLootTables(ExtraGolems.MODID, GolemNames.STAINEDGLASS_GOLEM, EntityStainedGlassGolem.COLOR_ARRAY.length);
     registerLootTables(ExtraGolems.MODID, GolemNames.STAINEDTERRACOTTA_GOLEM,
         EntityStainedClayGolem.COLOR_ARRAY.length);
@@ -155,14 +157,9 @@ public class CommonProxy {
       }
     }.setRegistryName(GolemItems.golemHead.getRegistryName()));
 
-    event.getRegistry().register(new ItemBedrockGolem().setTranslationKey("spawn_bedrock_golem")
-        .setRegistryName(ExtraGolems.MODID, "spawn_bedrock_golem"));
-
-    event.getRegistry().register(
-        new ItemGolemSpell().setTranslationKey("golem_paper").setRegistryName(ExtraGolems.MODID, "golem_paper"));
-
-    event.getRegistry()
-        .register(new ItemInfoBook().setTranslationKey("info_book").setRegistryName(ExtraGolems.MODID, "info_book"));
+    event.getRegistry().register(new ItemBedrockGolem().setUnlocalizedName("spawn_bedrock_golem").setRegistryName(ExtraGolems.MODID, "spawn_bedrock_golem"));
+    event.getRegistry().register(new ItemGolemSpell().setUnlocalizedName("golem_paper").setRegistryName(ExtraGolems.MODID, "golem_paper"));
+    event.getRegistry().register(new ItemInfoBook().setUnlocalizedName("info_book").setRegistryName(ExtraGolems.MODID, "info_book"));
   }
 
   @SubscribeEvent
@@ -171,15 +168,10 @@ public class CommonProxy {
     final int SEALANTERN_FREQ = GolemLookup.getConfig(EntitySeaLanternGolem.class)
         .getInt(EntitySeaLanternGolem.FREQUENCY);
     event.getRegistry().registerAll(
-        new BlockGolemHead().setTranslationKey("golem_head").setRegistryName(ExtraGolems.MODID, "golem_head"),
-        new BlockUtilityGlow(Material.GLASS, 1.0F, GLOWSTONE_FREQ, Blocks.AIR.getDefaultState())
-            .setTranslationKey("light_provider_full").setRegistryName(ExtraGolems.MODID, "light_provider_full"),
-        new BlockUtilityGlowWater(Material.WATER, 1.0F, SEALANTERN_FREQ,
-            Blocks.WATER.getDefaultState().withProperty(BlockLiquid.LEVEL, 0))
-                .setTranslationKey("water_light_provider_full")
-                .setRegistryName(ExtraGolems.MODID, "water_light_provider_full"),
-        new BlockUtilityPower(15, EntityRedstoneGolem.DEF_FREQ).setTranslationKey("power_provider_all")
-            .setRegistryName(ExtraGolems.MODID, "power_provider_all"));
+        new BlockGolemHead().setUnlocalizedName("golem_head").setRegistryName(ExtraGolems.MODID, "golem_head"),
+        new BlockUtilityGlow(Material.GLASS, 1.0F, GLOWSTONE_FREQ, Blocks.AIR.getDefaultState()).setUnlocalizedName("light_provider_full").setRegistryName(ExtraGolems.MODID, "light_provider_full"),
+        new BlockUtilityGlowWater(Material.WATER, 1.0F, SEALANTERN_FREQ, Blocks.WATER.getDefaultState().withProperty(BlockLiquid.LEVEL, 0)).setUnlocalizedName("water_light_provider_full").setRegistryName(ExtraGolems.MODID, "water_light_provider_full"),
+        new BlockUtilityPower(15, EntityRedstoneGolem.DEF_FREQ).setUnlocalizedName("power_provider_all").setRegistryName(ExtraGolems.MODID, "power_provider_all"));
   }
 
   /**

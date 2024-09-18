@@ -11,6 +11,7 @@ public final class GolemNames {
   public static final String BOOKSHELF_GOLEM = "golem_bookshelf";
   public static final String CLAY_GOLEM = "golem_clay";
   public static final String COAL_GOLEM = "golem_coal";
+  public static final String COBBLESTONE_GOLEM = "golem_cobblestone";
   public static final String CONCRETE_GOLEM = "golem_concrete";
   public static final String CRAFTING_GOLEM = "golem_crafting";
   public static final String DIAMOND_GOLEM = "golem_diamond";

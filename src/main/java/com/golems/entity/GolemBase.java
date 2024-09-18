@@ -1,20 +1,10 @@
 package com.golems.entity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.golems.items.ItemBedrockGolem;
 import com.golems.main.Config;
 import com.golems.main.ExtraGolems;
 import com.golems.util.GolemConfigSet;
 import com.golems.util.GolemLookup;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -33,7 +23,6 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -41,18 +30,25 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Base class for all golems in this mod.
@@ -61,6 +57,9 @@ public abstract class GolemBase extends EntityIronGolem {
 
   private static final DataParameter<Boolean> CHILD = EntityDataManager.<Boolean>createKey(GolemBase.class,
       DataSerializers.BOOLEAN);
+
+  public static final Logger LOGGER = LogManager.getFormatterLogger(ExtraGolems.MODID);
+
   private static final String KEY_CHILD = "isChild";
   public static final int WANDER_DISTANCE = 64;
 
@@ -78,6 +77,8 @@ public abstract class GolemBase extends EntityIronGolem {
   protected int criticalChance = 5;
   protected boolean takesFallDamage = false;
   protected boolean canDrown = false;
+
+  private int attackTimer = 0;
 
   // swimming AI
   protected EntityAIBase swimmingAI = new EntityAISwimming(this);
@@ -117,10 +118,29 @@ public abstract class GolemBase extends EntityIronGolem {
   ////////////// BEHAVIOR OVERRIDES //////////////////
 
   @Override
+  public int getAttackTimer() {
+    return this.attackTimer;
+  }
+
+  @Override
   protected void entityInit() {
     super.entityInit();
     this.setTextureType(this.applyTexture());
     this.getDataManager().register(CHILD, Boolean.valueOf(false));
+  }
+
+  @Override
+  public void onLivingUpdate() {
+    super.onLivingUpdate();
+    if (this.attackTimer > 0)
+    {
+      --this.attackTimer;
+    }
+
+    if (this.getActivePotionEffect(MobEffects.REGENERATION) == null
+            && rand.nextInt(40) == 0) {
+      this.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200 + 20 * (1 + rand.nextInt(8)), 1));
+    }
   }
 
   @Override
@@ -130,6 +150,19 @@ public abstract class GolemBase extends EntityIronGolem {
     this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(cfg.getBaseAttack());
     this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(cfg.getMaxHealth());
     this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.22D);
+  }
+
+  @Override
+  @SideOnly(Side.CLIENT)
+  public void handleStatusUpdate(byte id)
+  {
+    if (id == 4)
+    {
+      this.attackTimer = 5;
+      this.playSound(SoundEvents.ENTITY_IRONGOLEM_ATTACK, 1.0F, 1.0F);
+    } else {
+      super.handleStatusUpdate(id);
+    }
   }
 
   /**
@@ -158,7 +191,7 @@ public abstract class GolemBase extends EntityIronGolem {
       damage *= this.criticalModifier;
     }
     // use reflection to reset 'attackTimer' field
-    ReflectionHelper.setPrivateValue(EntityIronGolem.class, this, 10, "field_70855_f", "attackTimer");
+    this.attackTimer = 5;
     this.world.setEntityState(this, (byte) 4);
     final boolean flag = entity.attackEntityFrom(DamageSource.causeMobDamage(this), damage);
 

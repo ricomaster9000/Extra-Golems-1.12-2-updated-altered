@@ -172,7 +172,7 @@ public abstract class BlockUtility extends BlockEmptyDrops {
 
   @Override
   @SideOnly(Side.CLIENT)
-  public BlockRenderLayer getRenderLayer() {
+  public BlockRenderLayer getBlockLayer() {
     return BlockRenderLayer.CUTOUT;
   }
 

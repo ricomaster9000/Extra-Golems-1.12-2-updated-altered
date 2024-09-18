@@ -47,11 +47,11 @@ public final class BlockGolemHead extends BlockHorizontal {
    *
    * @deprecated
    */
-  @Deprecated
-  @Override
-  public IBlockState getStateFromMeta(final int meta) {
-    return this.getDefaultState().withProperty(FACING, EnumFacing.byHorizontalIndex(meta));
-  }
+    @Deprecated
+    @Override
+    public IBlockState getStateFromMeta(final int meta) {
+      return this.getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
+    }
 
   /**
    * Convert the BlockState into the correct metadata value.

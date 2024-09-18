@@ -14,6 +14,7 @@ entity.golems.golem_bookshelf.name=圖書管理員魔像
 entity.golems.golem_clay.name=黏土魔像
 entity.golems.golem_coal.name=煤炭魔像
 entity.golems.golem_concrete.name=混凝土魔像
+entity.golems.golem_cobblestone.name=混凝土魔像
 entity.golems.golem_coral.name=珊瑚魔像
 entity.golems.golem_crafting.name=合成魔像
 entity.golems.golem_diamond.name=鑽石魔像
@@ -106,3 +107,4 @@ golembook.build_golem.howto3=放置一顆 %s 在中間方塊的上面,然後你�
 
 #Vanilla fix
 block.concrete=Concrete
+block.cobblestone=Cobblestone
