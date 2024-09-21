@@ -96,7 +96,7 @@ public class CommonProxy {
         build(EntityClayGolem.class, GolemNames.CLAY_GOLEM, Blocks.CLAY),
         build(EntityCoalGolem.class, GolemNames.COAL_GOLEM, Blocks.COAL_BLOCK),
         build(EntityConcreteGolem.class, GolemNames.CONCRETE_GOLEM, Blocks.CONCRETE),
-        build(EntityConcreteGolem.class, GolemNames.COBBLESTONE_GOLEM, Blocks.COBBLESTONE),
+        build(EntityCobblestoneGolem.class, GolemNames.COBBLESTONE_GOLEM, Blocks.COBBLESTONE),
         build(EntityCraftingGolem.class, GolemNames.CRAFTING_GOLEM, Blocks.CRAFTING_TABLE),
         build(EntityDiamondGolem.class, GolemNames.DIAMOND_GOLEM, Blocks.DIAMOND_BLOCK),
         build(EntityDispenserGolem.class, GolemNames.DISPENSER_GOLEM, Blocks.DISPENSER),

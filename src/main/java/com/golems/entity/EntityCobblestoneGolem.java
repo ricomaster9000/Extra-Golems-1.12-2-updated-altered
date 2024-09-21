@@ -23,7 +23,7 @@ public final class EntityCobblestoneGolem extends GolemColorizedMultiTextured {
   private static final ResourceLocation TEXTURE_BASE = GolemBase.makeTexture(ExtraGolems.MODID,
       GolemNames.COBBLESTONE_GOLEM + "_base");
   private static final ResourceLocation TEXTURE_OVERLAY = GolemBase.makeTexture(ExtraGolems.MODID,
-      GolemNames.CONCRETE_GOLEM + "_grayscale");
+      GolemNames.COBBLESTONE_GOLEM);
 
   public EntityCobblestoneGolem(final World world) {
     super(world, TEXTURE_BASE, TEXTURE_OVERLAY, COLOR_ARRAY);

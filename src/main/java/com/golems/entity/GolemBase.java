@@ -137,8 +137,7 @@ public abstract class GolemBase extends EntityIronGolem {
       --this.attackTimer;
     }
 
-    if (this.getActivePotionEffect(MobEffects.REGENERATION) == null
-            && rand.nextInt(40) == 0) {
+    if (this.getActivePotionEffect(MobEffects.REGENERATION) == null && rand.nextInt(80) == 0) {
       this.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200 + 20 * (1 + rand.nextInt(8)), 1));
     }
   }
