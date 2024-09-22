@@ -4,14 +4,17 @@ import com.golems.blocks.BlockGolemHead;
 import com.golems.entity.*;
 import com.golems.items.ItemBedrockGolem;
 import com.golems.main.Config;
+import com.golems.main.ExtraGolems;
+import com.golems.util.ReflectionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemBlock;
@@ -20,12 +23,16 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
 import net.minecraft.world.biome.*;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,6 +41,9 @@ import java.util.Random;
  * Handles events added specifically from this mod.
  **/
 public class GolemCommonEventHandler {
+
+  public static final Logger LOGGER = LogManager.getFormatterLogger(ExtraGolems.MODID);
+  private static List<String> entityAINearestAttackableTargetTargetClassFieldNames = new ArrayList<>();
 
   @SubscribeEvent
   public void onPopulateChunk(PopulateChunkEvent.Post event) {
@@ -170,8 +180,7 @@ public class GolemCommonEventHandler {
   public void onPlayerPlaceBlock(PlayerInteractEvent.RightClickBlock event) {
     ItemStack stack = event.getItemStack();
     // check qualifications for running this event...
-    if (Config.doesPumpkinBuildGolem() && !event.isCanceled() && !stack.isEmpty()
-        && stack.getItem() instanceof ItemBlock) {
+    if (Config.doesPumpkinBuildGolem() && !event.isCanceled() && !stack.isEmpty() && stack.getItem() instanceof ItemBlock) {
       Block heldBlock = ((ItemBlock) stack.getItem()).getBlock();
       // if player is holding pumpkin or lit pumpkin, try to place the block
       if (heldBlock instanceof BlockPumpkin) {
@@ -183,8 +192,9 @@ public class GolemCommonEventHandler {
         }
         // now we're ready to place the block
         if (event.getEntityPlayer().canPlayerEdit(pumpkinPos, event.getFace(), stack)) {
-          IBlockState pumpkin = heldBlock.getDefaultState().withProperty(BlockHorizontal.FACING,
-              event.getEntityPlayer().getHorizontalFacing().getOpposite());
+          IBlockState pumpkin = heldBlock
+                  .getDefaultState()
+                  .withProperty(BlockHorizontal.FACING, event.getEntityPlayer().getHorizontalFacing().getOpposite());
           // set block and trigger golem-checking
           if (event.getWorld().setBlockState(pumpkinPos, pumpkin)) {
             event.setCanceled(true);
@@ -239,5 +249,71 @@ public class GolemCommonEventHandler {
 //				((EntityFurnaceGolem)event.getEntityLiving()).setAttackTarget(null);
 //			}
 //		}
+  }
+
+  private Field fetchTargetClassFieldFromClass(Object aiTask) {
+    Class<?> clazz = aiTask.getClass();
+    clazz = !clazz.getSimpleName().equals("EntityAINearestAttackableTarget") ? aiTask.getClass().getSuperclass() : clazz;
+    clazz = !clazz.getSimpleName().equals("EntityAINearestAttackableTarget") ? clazz.getSuperclass() : clazz;
+    Field[] entityAINearestAttackableTargetFields = ReflectionUtil.getClassFields(clazz);
+    //LOGGER.info("fields found: " + entityAINearestAttackableTargetFields.length);
+    for (Field field : entityAINearestAttackableTargetFields) {
+      //LOGGER.info("field name: " + field.getName());
+      //LOGGER.info("field type: " + field.getType());
+      Object fieldValue = ReflectionUtil.getFieldValueNoException(field.getName(), aiTask);
+      if (field.getType().equals(Class.class) && fieldValue.equals(EntityPlayer.class)) {
+        //LOGGER.info("found entityAINearestAttackableTargetTargetClassFieldName field");
+        return field;
+      }
+    }
+    return null;
+  }
+
+  private boolean doesAiTaskTargetPlayer(EntityAINearestAttackableTarget<?> aiTask) {
+    boolean result = false;
+    //LOGGER.info("AITask class name: " + aiTask.getClass().getSimpleName(), ", superclass = " + aiTask.getClass().getSuperclass().getSimpleName());
+    Object fetchedFieldValue = null;
+    for (String possibleFieldName : entityAINearestAttackableTargetTargetClassFieldNames) {
+      fetchedFieldValue = ReflectionUtil.getFieldValueNoException(possibleFieldName, aiTask);
+      if (fetchedFieldValue != null) {
+        break;
+      }
+    }
+    if (fetchedFieldValue == null || entityAINearestAttackableTargetTargetClassFieldNames.isEmpty()) {
+      Field fetchedField = fetchTargetClassFieldFromClass(aiTask);
+      if (fetchedField != null) {
+        entityAINearestAttackableTargetTargetClassFieldNames.add(fetchedField.getName());
+        fetchedFieldValue = ReflectionUtil.getFieldValueNoException(fetchedField.getName(), aiTask);
+      }
+    }
+    return fetchedFieldValue != null && fetchedFieldValue.equals(EntityPlayer.class);
+  }
+
+  @SubscribeEvent
+  public void onEntitySpawn(EntityJoinWorldEvent event) {
+    Entity entity = event.getEntity();
+    // Check if the entity is a zombie or skeleton
+    if (entity instanceof EntityCreature) {
+      EntityCreature livingEntity = (EntityCreature) entity;
+      List<EntityAITasks.EntityAITaskEntry> toRemove = new ArrayList<>();
+      boolean foundPlayerTargetingTask = false;
+
+      for (EntityAITasks.EntityAITaskEntry entityAITaskEntry : livingEntity.targetTasks.taskEntries) {
+        if(entityAITaskEntry.action instanceof EntityAINearestAttackableTarget) {
+            if (doesAiTaskTargetPlayer((EntityAINearestAttackableTarget) entityAITaskEntry.action)) {
+            toRemove.add(entityAITaskEntry);
+            foundPlayerTargetingTask = true;
+          }
+        }
+      }
+
+      if(foundPlayerTargetingTask) {
+        LOGGER.info("adjusting player target priority for " + entity.getName());
+        for (EntityAITasks.EntityAITaskEntry taskEntry : toRemove) {
+          livingEntity.targetTasks.removeTask(taskEntry.action);
+        }
+        livingEntity.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(livingEntity, EntityPlayer.class, true));
+      }
+    }
   }
 }

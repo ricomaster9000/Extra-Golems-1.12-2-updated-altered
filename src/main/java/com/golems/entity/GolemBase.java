@@ -100,7 +100,7 @@ public abstract class GolemBase extends EntityIronGolem {
   public GolemBase(final World world) {
     super(world);
     this.setSize(1.4F, 2.9F);
-    this.setCanTakeFallDamage(false);
+    this.setCanTakeFallDamage(false); //TODO make configurable in config
     this.setCanSwim(false);
     GolemConfigSet cfg = getConfig(this);
     this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(cfg.getBaseAttack());

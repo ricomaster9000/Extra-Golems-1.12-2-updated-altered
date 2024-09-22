@@ -30,7 +30,7 @@ public final class Config {
   private static boolean bedrockGolemCreativeOnly;
   private static boolean useOreDictName;
   private static boolean enableInteractTexture;
-  private static boolean enableFriendlyFire;
+  private static boolean enableFriendlyFire = false;
   private static boolean enableHealGolems;
   private static int villageGolemSpawnChance;
   private static String[] villageGolemSpawnsDesert = new String[] { GolemNames.STRAW_GOLEM, GolemNames.SANDSTONE_GOLEM,
@@ -104,7 +104,7 @@ public final class Config {
   private static void loadOther(final Configuration config) {
     enableHealGolems = config.getBoolean("Heal Golems", CATEGORY_OTHER, true,
         "When enabled, giving blocks to golems can restore health");
-    enableFriendlyFire = config.getBoolean("Friendly Fire", CATEGORY_OTHER, true,
+    enableFriendlyFire = config.getBoolean("Friendly Fire", CATEGORY_OTHER, false,
         "When false, attacking a player-built golem will not make it attack you");
     bedrockGolemCreativeOnly = config.getBoolean("Bedrock Golem Creative Only", CATEGORY_OTHER, true,
         "When true, only players in creative mode can use a Bedrock Golem spawn item");
