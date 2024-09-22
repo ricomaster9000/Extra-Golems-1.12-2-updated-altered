@@ -269,7 +269,7 @@ public class GolemCommonEventHandler {
     return null;
   }
 
-  private boolean doesAiTaskTargetPlayer(EntityAINearestAttackableTarget<?> aiTask) {
+  private boolean doesAiTaskTargetPlayer(Object aiTask) {
     boolean result = false;
     //LOGGER.info("AITask class name: " + aiTask.getClass().getSimpleName(), ", superclass = " + aiTask.getClass().getSuperclass().getSimpleName());
     Object fetchedFieldValue = null;
@@ -292,7 +292,6 @@ public class GolemCommonEventHandler {
   @SubscribeEvent
   public void onEntitySpawn(EntityJoinWorldEvent event) {
     Entity entity = event.getEntity();
-    // Check if the entity is a zombie or skeleton
     if (entity instanceof EntityCreature) {
       EntityCreature livingEntity = (EntityCreature) entity;
       List<EntityAITasks.EntityAITaskEntry> toRemove = new ArrayList<>();
@@ -300,7 +299,7 @@ public class GolemCommonEventHandler {
 
       for (EntityAITasks.EntityAITaskEntry entityAITaskEntry : livingEntity.targetTasks.taskEntries) {
         if(entityAITaskEntry.action instanceof EntityAINearestAttackableTarget) {
-            if (doesAiTaskTargetPlayer((EntityAINearestAttackableTarget) entityAITaskEntry.action)) {
+          if (doesAiTaskTargetPlayer(entityAITaskEntry.action)) {
             toRemove.add(entityAITaskEntry);
             foundPlayerTargetingTask = true;
           }
@@ -311,8 +310,8 @@ public class GolemCommonEventHandler {
         LOGGER.info("adjusting player target priority for " + entity.getName());
         for (EntityAITasks.EntityAITaskEntry taskEntry : toRemove) {
           livingEntity.targetTasks.removeTask(taskEntry.action);
+          livingEntity.targetTasks.addTask(3,taskEntry.action);
         }
-        livingEntity.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(livingEntity, EntityPlayer.class, true));
       }
     }
   }
